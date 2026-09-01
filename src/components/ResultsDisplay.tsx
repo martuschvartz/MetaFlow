@@ -1,5 +1,26 @@
+'use client';
+
 import React from 'react';
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Button,
+  Grid,
+  Paper,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  Chip,
+} from '@mui/material';
 import { PlayerAssessment, PsychologistAssessment } from '../types/assessment';
+import {
+  ArrowBack as ArrowBackIcon,
+  CheckCircleOutlined as CheckCircleOutlineIcon,
+  LibraryBooks as LibraryBooksIcon
+} from '@mui/icons-material';
 
 interface ResultsDisplayProps {
   playerName: string;
@@ -16,14 +37,19 @@ export default function ResultsDisplay({
   recommendations,
   onReset,
 }: ResultsDisplayProps) {
-  // Helpers para dar estilo a los puntajes
-  const getScoreColor = (value: number) => {
-    if (value >= 4) return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-    if (value >= 3) return 'bg-amber-100 text-amber-800 border-amber-200';
-    return 'bg-rose-100 text-rose-800 border-rose-200';
+
+  const getMetricColor = (val: number, isLowerBetter = false) => {
+    if (isLowerBetter) {
+      if (val <= 2) return 'success';
+      if (val <= 4) return 'warning';
+      return 'error';
+    } else {
+      if (val >= 4) return 'success';
+      if (val >= 3) return 'warning';
+      return 'error';
+    }
   };
 
-  // Convertimos las fortalezas/observados a listas legibles para el reporte
   const getActiveObservations = () => {
     const list = [];
     if (psychData.observedPsychology) list.push('Psicología del Deporte');
@@ -47,125 +73,262 @@ export default function ResultsDisplay({
   const activeObs = getActiveObservations();
   const activeStrengths = getActiveStrengths();
 
+  const formattedDate = new Date().toLocaleDateString('es-AR', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
   return (
-    <div className="space-y-8 animate-fadeIn">
-      {/* Encabezado del Reporte */}
-      <div className="bg-gradient-to-r from-teal-800 to-indigo-900 text-white p-6 rounded-2xl shadow-md flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <span className="text-teal-200 text-xs font-bold tracking-widest uppercase">Reporte Generado</span>
-          <h2 className="text-2xl font-black mt-1">{playerName || 'Jugadora de Volley'}</h2>
-          <p className="text-zinc-300 text-xs mt-1">
-            Fecha de análisis: {new Date().toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-          </p>
-        </div>
-        <button
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      {/* Banner Encabezado */}
+      <Paper
+        sx={{
+          p: 4,
+          borderRadius: 4,
+          background: 'linear-gradient(135deg, #0f766e 0%, #4f46e5 100%)',
+          color: 'white',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 3,
+          boxShadow: '0 8px 24px rgba(15, 118, 110, 0.15)'
+        }}
+      >
+        <Box>
+          <Typography variant="caption" sx={{ textTransform: 'uppercase', letterSpacing: 2, fontWeight: 'bold', opacity: 0.8 }}>
+            Reporte de Sesión Generado
+          </Typography>
+          <Typography variant="h4" sx={{ mt: 0.5, mb: 1, fontWeight: 900 }}>
+            {playerName || 'Jugadora de Vóley'}
+          </Typography>
+          <Typography variant="body2" sx={{ opacity: 0.9 }}>
+            Fecha de diagnóstico: <Box component="span" sx={{ textTransform: 'capitalize' }}>{formattedDate}</Box>
+          </Typography>
+        </Box>
+        <Button
+          variant="contained"
           onClick={onReset}
-          className="bg-white/10 hover:bg-white/20 text-white text-xs font-bold py-2.5 px-4 rounded-xl border border-white/20 transition-all self-start md:self-auto"
+          startIcon={<ArrowBackIcon />}
+          sx={{
+            bgcolor: 'rgba(255,255,255,0.15)',
+            color: 'white',
+            fontWeight: 'bold',
+            textTransform: 'none',
+            borderRadius: 2.5,
+            border: '1px solid rgba(255,255,255,0.2)',
+            py: 1,
+            px: 2,
+            '&:hover': {
+              bgcolor: 'rgba(255,255,255,0.25)',
+              borderColor: 'white'
+            }
+          }}
         >
-          ← Cargar Nuevo Diagnóstico
-        </button>
-      </div>
+          Nueva Evaluación
+        </Button>
+      </Paper>
 
-      <div className="grid md:grid-cols-3 gap-6">
-        {/* Panel Izquierdo: Resumen Jugadora */}
-        <div className="bg-zinc-50 p-5 rounded-2xl border border-zinc-100 space-y-4 md:col-span-1">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500">Métricas Emocionales</h3>
-          
-          <div className="space-y-3">
-            {[
-              { label: 'Flow', val: playerData.flow },
-              { label: 'Activación / Nervios', val: playerData.activation },
-              { label: 'Confianza', val: playerData.confidence },
-              { label: 'Presión Percibida', val: playerData.pressure },
-            ].map((metric) => (
-              <div key={metric.label} className="flex justify-between items-center bg-white p-3 rounded-xl border border-zinc-100">
-                <span className="text-xs font-semibold text-zinc-700">{metric.label}</span>
-                <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${getScoreColor(metric.val)}`}>
-                  {metric.val} / 5
-                </span>
-              </div>
-            ))}
-          </div>
+      <Grid container spacing={4}>
+        {/* Columna Izquierda: Percepción de la Jugadora */}
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card variant="outlined" sx={{ borderRadius: 3, p: 1, height: '100%', borderColor: 'divider' }}>
+            <CardContent>
+              <Typography variant="subtitle1" color="primary.dark" sx={{ mb: 2, fontWeight: 800 }}>
+                Sensaciones de la Jugadora
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {[
+                  { label: 'Flow / Fluidez', val: playerData.flow, isLower: false },
+                  { label: 'Activación / Nervios', val: playerData.activation, isLower: true },
+                  { label: 'Confianza', val: playerData.confidence, isLower: false },
+                  { label: 'Presión Percibida', val: playerData.pressure, isLower: true },
+                ].map((metric) => (
+                  <Box
+                    key={metric.label}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      bgcolor: 'background.default',
+                      p: 2,
+                      borderRadius: 3,
+                      border: '1px solid',
+                      borderColor: 'divider',
+                    }}
+                  >
+                    <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                      {metric.label}
+                    </Typography>
+                    <Chip
+                      label={`${metric.val} / 5`}
+                      size="small"
+                      color={getMetricColor(metric.val, metric.isLower)}
+                      sx={{ fontWeight: 'bold' }}
+                    />
+                  </Box>
+                ))}
 
-          <div className="bg-white p-3 rounded-xl border border-zinc-100 space-y-1">
-            <span className="text-[11px] font-bold text-zinc-400 block uppercase">Diálogo Interno</span>
-            <span className={`inline-block text-xs font-bold px-3 py-1 rounded-full uppercase ${
-              playerData.selfTalk === 'positivo'
-                ? 'bg-emerald-100 text-emerald-800'
-                : playerData.selfTalk === 'negativo'
-                ? 'bg-rose-100 text-rose-800'
-                : 'bg-zinc-100 text-zinc-800'
-            }`}>
-              {playerData.selfTalk}
-            </span>
-          </div>
-        </div>
+                <Box
+                  sx={{
+                    bgcolor: 'background.default',
+                    p: 2,
+                    borderRadius: 3,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    mt: 1
+                  }}
+                >
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontWeight: 'bold', textTransform: 'uppercase', mb: 0.5 }}>
+                    DIÁLOGO INTERNO
+                  </Typography>
+                  <Chip
+                    label={playerData.selfTalk}
+                    color={
+                      playerData.selfTalk === 'positivo'
+                        ? 'success'
+                        : playerData.selfTalk === 'negativo'
+                        ? 'error'
+                        : 'default'
+                    }
+                    sx={{ fontWeight: 'bold', textTransform: 'capitalize' }}
+                  />
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
 
-        {/* Panel Central: Resumen Psicólogo */}
-        <div className="bg-zinc-50 p-5 rounded-2xl border border-zinc-100 space-y-4 md:col-span-2 flex flex-col justify-between">
-          <div className="space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500">Diagnóstico Profesional</h3>
-            
-            <div className="grid sm:grid-cols-2 gap-4">
-              {/* Conceptos en alerta */}
-              <div className="bg-white p-4 rounded-xl border border-zinc-100 space-y-2">
-                <span className="text-xs font-bold text-sky-800 block border-b pb-1">Conceptos Observados</span>
-                {activeObs.length > 0 ? (
-                  <ul className="space-y-1 text-xs text-zinc-700 list-disc list-inside">
-                    {activeObs.map((obs) => (
-                      <li key={obs}>{obs}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-xs text-zinc-400 italic">Ningún concepto en alerta observado.</p>
-                )}
-              </div>
-
-              {/* Fortalezas */}
-              <div className="bg-white p-4 rounded-xl border border-zinc-100 space-y-2">
-                <span className="text-xs font-bold text-emerald-800 block border-b pb-1">Fortalezas Identificadas</span>
-                {activeStrengths.length > 0 ? (
-                  <ul className="space-y-1 text-xs text-zinc-700 list-disc list-inside">
-                    {activeStrengths.map((st) => (
-                      <li key={st}>{st}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-xs text-zinc-400 italic">No se marcaron fortalezas consolidadas.</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-amber-50/50 p-4 rounded-xl border border-amber-200 text-[11px] text-amber-800 leading-relaxed mt-4">
-            <strong>Nota metodológica:</strong> Los siguientes pasos se basan en una correlación de reglas estáticas validadas desde la psicología del deporte (TCC, Logoterapia, Flow) y la deportología médica aplicada al voleibol.
-          </div>
-        </div>
-      </div>
-
-      {/* Resultados Accionables: Next Steps */}
-      <div className="bg-white p-6 rounded-3xl border border-zinc-100 shadow-sm space-y-4">
-        <div className="border-b border-zinc-100 pb-3">
-          <h3 className="text-lg font-extrabold text-zinc-800 flex items-center gap-2">
-            🚀 Plan de Acción e Indicaciones Recomendadas
-          </h3>
-          <p className="text-xs text-zinc-500">Sugerencias concretas para aplicar en el próximo entrenamiento y sesión.</p>
-        </div>
-
-        <div className="grid gap-3">
-          {recommendations.map((step, idx) => (
-            <div
-              key={idx}
-              className="flex items-start bg-zinc-50 p-4 rounded-xl border-l-4 border-emerald-500 hover:bg-zinc-100/50 transition-all gap-3"
+        {/* Columna Derecha: Observaciones Clínicas y Next Steps */}
+        <Grid size={{ xs: 12, md: 8 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {/* Próximos Pasos (Next Steps) - Bloque Central */}
+            <Card
+              sx={{
+                borderRadius: 4,
+                border: '1px solid',
+                borderColor: 'rgba(79, 70, 229, 0.2)',
+                bgcolor: 'rgba(79, 70, 229, 0.03)',
+                boxShadow: '0 4px 12px rgba(79, 70, 229, 0.05)'
+              }}
             >
-              <span className="flex items-center justify-center bg-emerald-100 text-emerald-800 font-bold text-xs h-6 w-6 rounded-full shrink-0">
-                {idx + 1}
-              </span>
-              <p className="text-sm font-medium text-zinc-800 leading-relaxed">{step}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <LibraryBooksIcon color="secondary" />
+                  <Typography variant="h6" color="secondary.dark" sx={{ fontWeight: 900 }}>
+                    Next Steps / Plan de Acción Inmediato
+                  </Typography>
+                </Box>
+                <Divider sx={{ mb: 2, borderColor: 'rgba(79, 70, 229, 0.1)' }} />
+                <List sx={{ p: 0 }}>
+                  {recommendations.map((rec, rIdx) => (
+                    <ListItem
+                      key={rIdx}
+                      sx={{
+                        p: 0,
+                        mb: 2,
+                        alignItems: 'flex-start',
+                        '&:last-child': { mb: 0 }
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          bgcolor: 'secondary.main',
+                          color: 'white',
+                          minWidth: 20,
+                          height: 20,
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '0.75rem',
+                          fontWeight: 'bold',
+                          mr: 2,
+                          mt: '2px'
+                        }}
+                      >
+                        {rIdx + 1}
+                      </Box>
+                      <ListItemText
+                        primary={
+                          <Typography variant="body1" sx={{ fontWeight: '500', color: 'text.primary', lineHeight: 1.4 }}>
+                            {rec}
+                          </Typography>
+                        }
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </CardContent>
+            </Card>
+
+            {/* Observaciones y Fortalezas Profesionales */}
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', borderColor: 'divider' }}>
+                  <CardContent sx={{ p: 2.5 }}>
+                    <Typography variant="subtitle2" color="warning.dark" sx={{ mb: 1.5, fontWeight: 800 }}>
+                      Alertas Profesionales Observadas
+                    </Typography>
+                    {activeObs.length > 0 ? (
+                      <List dense sx={{ p: 0 }}>
+                        {activeObs.map((obs) => (
+                          <ListItem key={obs} sx={{ p: 0, mb: 1 }}>
+                            <CheckCircleOutlineIcon sx={{ fontSize: 16, mr: 1, color: 'warning.main' }} />
+                            <ListItemText
+                              primary={
+                                <Typography variant="body2" sx={{ fontWeight: '600' }}>
+                                  {obs}
+                                </Typography>
+                              }
+                            />
+                          </ListItem>
+                        ))}
+                      </List>
+                    ) : (
+                      <Typography variant="caption" color="text.secondary">
+                        No se registraron alertas profesionales en esta sesión.
+                      </Typography>
+                    )}
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', borderColor: 'divider' }}>
+                  <CardContent sx={{ p: 2.5 }}>
+                    <Typography variant="subtitle2" color="success.dark" sx={{ mb: 1.5, fontWeight: 800 }}>
+                      Fortalezas a Potenciar
+                    </Typography>
+                    {activeStrengths.length > 0 ? (
+                      <List dense sx={{ p: 0 }}>
+                        {activeStrengths.map((str) => (
+                          <ListItem key={str} sx={{ p: 0, mb: 1 }}>
+                            <CheckCircleOutlineIcon sx={{ fontSize: 16, mr: 1, color: 'success.main' }} />
+                            <ListItemText
+                              primary={
+                                <Typography variant="body2" sx={{ fontWeight: '600' }}>
+                                  {str}
+                                </Typography>
+                              }
+                            />
+                          </ListItem>
+                        ))}
+                      </List>
+                    ) : (
+                      <Typography variant="caption" color="text.secondary">
+                        No se marcaron fortalezas consolidadas específicas.
+                      </Typography>
+                    )}
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+          </Box>
+        </Grid>
+      </Grid>
+    </Box>
   );
 }

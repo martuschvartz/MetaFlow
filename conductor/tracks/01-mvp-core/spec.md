@@ -1,37 +1,42 @@
-# Track 01: MVP Core - Formularios y Next Steps
+# Track 01: MVP Core - Scaffolding y Flujo Principal
 
 ## Objective
-Desarrollar el flujo central de la plataforma en el cual se capturan los datos de la jugadora y del psicólogo deportivo para generar recomendaciones accionables ("next steps"). El objetivo de este MVP es validar la utilidad del formulario y del motor de reglas, sin necesidad de un backend real de momento.
+Desarrollar el scaffolding (estructura base) de la aplicación y el flujo central en el cual se capturan datos técnicos y emocionales para generar recomendaciones ("next steps"). El objetivo es tener toda la estructura de navegación preparada (aunque mockeada) y validar la utilidad del formulario y el motor de reglas en una vista combinada, sin backend real.
 
 ## Scope (Alcance)
 
-### 1. Modelos de Datos (Interfaces TypeScript)
-- **Autoevaluación de la Jugadora (Valores graduales 1 al 5):**
-  - Estado de flow.
-  - Estado de activación/nervios.
-  - Confianza.
-  - Presión percibida.
-  - Diálogo interno predominante.
-- **Evaluación del Psicólogo Deportivo (Checklists booleanos o categóricos):**
-  - **Conceptos observados:** Psicología del deporte, Estado de flow, Logoterapia, Cognitivo conductual, Deportología/traumatología/kinesiología.
-  - **Fortalezas observadas:** (Mismas categorías).
+### 1. Estructura de Vistas (Scaffolding Mockeado)
+- Creación de rutas principales (App Router):
+  - `/login`: Vista mockeada de autenticación.
+  - `/dashboard`: Vista mockeada del panel principal (resumen, métricas rápidas).
+  - `/players`: Listado mockeado de jugadoras.
+  - `/players/[id]`: Perfil de una jugadora específica.
+  - `/assessment/new`: Pantalla funcional para este MVP donde residirá el formulario principal.
 
-### 2. Interfaz de Usuario (UI)
-- **Pantalla de Carga de Datos:** Un formulario responsivo, posiblemente dividido en pasos (Step 1: Jugadora, Step 2: Psicólogo) o secciones bien delimitadas.
-  - Uso de componentes visuales amigables: Sliders para métricas de 1 a 5. Casilleros (Checkboxes) agrupados por área para el psicólogo.
-- **Pantalla de Resultados:** Una vista donde, en base al submit del formulario, se presenta el perfil actual resumido junto con un bloque de **"Next Steps / Indicaciones"**.
+### 2. Flujo de Formulario (UI)
+- **Simulación en Pantalla Única (`/assessment/new`):**
+  - Para agilizar pruebas, los campos de la jugadora y del psicólogo deportivo convivirán temporalmente en un solo formulario.
+  - Uso de componentes de la librería seleccionada (ej. MUI/Mantine): Sliders para métricas de autoevaluación (1 a 5) y Checkboxes para observaciones técnicas.
 
-### 3. Motor de Recomendaciones Estáticas
-- Un módulo utilitario (ej. `generateNextSteps(playerData, psychData)`) que contiene lógica estática de decisión.
-- *Ejemplo de regla conceptual:* Si la 'Confianza' es menor a 3 y el psicólogo marcó algo particular en 'Cognitivo conductual', se renderiza un next step como "Trabajar reestructuración cognitiva en la próxima sesión".
+### 3. Modelos de Datos (Interfaces TypeScript)
+- **Autoevaluación (Jugadora):**
+  - Estado de flow, activación/nervios, confianza, presión percibida, diálogo interno.
+- **Evaluación Profesional (Psicólogo):**
+  - Conceptos observados y fortalezas (Psicología deportiva, flow, cognitivo conductual, etc.).
 
-### 4. Gestión de Estado para el MVP
-- Almacenamiento temporal en LocalStorage o Context API para permitir simular el flujo completo (Ingreso de form -> Ver resultado) para la validación con stakeholders, antes de incorporar Supabase.
+### 4. Motor de Recomendaciones y Resultados
+- **Reglas Estáticas (If/Else):** Utilidad estática (ej. `generateNextSteps()`) que evalúa cruces entre el score emocional y las marcas técnicas.
+  - *Ejemplo:* Si "confianza < 3" y "cognitivo conductual = true" -> "Próximo paso: Trabajo en reestructuración cognitiva".
+- **Visualización de Resultados:** Al hacer submit, se redirige (o se muestra en un modal/pantalla) a la vista del reporte generado con las indicaciones.
+
+### 5. Gestión de Estado para el MVP
+- Almacenamiento temporal en el estado local (React State) o Context API simulando la persistencia durante la sesión.
 
 ## Out of Scope (Fuera del MVP Core)
 - Integración real con base de datos (Supabase).
-- Autenticación real de usuarios con roles y contraseñas.
-- Gráficos históricos de evolución en un Dashboard complejo a lo largo del tiempo.
+- Autenticación real de usuarios (JWT, roles).
+- Gráficos históricos funcionales.
 
 ## Design & Architecture Notes
-- Priorizar componentes modulares. El motor de reglas debe estar desacoplado de la vista, para que el día de mañana sea muy sencillo mover esa lógica a una API de Supabase o reemplazarlo con un prompt de IA.
+- Priorizar componentes modulares utilizando la librería de componentes elegida.
+- El motor de reglas debe estar puramente desacoplado en una función aislada, de forma que sea fácilmente migrable al backend en el futuro.

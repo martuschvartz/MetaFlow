@@ -1,4 +1,20 @@
+'use client';
+
 import React from 'react';
+import {
+  Box,
+  Typography,
+  Grid,
+  Slider,
+  Card,
+  CardContent,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Paper,
+} from '@mui/material';
 import { PlayerAssessment } from '../types/assessment';
 
 interface PlayerFormProps {
@@ -46,70 +62,137 @@ export default function PlayerForm({ data, onChange }: PlayerFormProps) {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="border-b border-zinc-200 pb-3">
-        <h2 className="text-xl font-bold text-emerald-700">1. Autoevaluación de la Jugadora</h2>
-        <p className="text-sm text-zinc-500">Métricas graduales de percepción subjetiva y estado psicológico actual.</p>
-      </div>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <Box sx={{ borderBottom: '1px solid', borderColor: 'divider', pb: 2 }}>
+        <Typography variant="h5" color="primary.main" sx={{ fontWeight: 800 }}>
+          1. Autoevaluación de la Jugadora
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Métricas graduales de percepción subjetiva y estado psicológico actual.
+        </Typography>
+      </Box>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <Grid container spacing={3}>
         {sliders.map(({ field, label, description, minLabel, maxLabel }) => (
-          <div key={field} className="bg-zinc-50 p-4 rounded-xl border border-zinc-100 space-y-3">
-            <div className="flex justify-between items-start">
-              <div>
-                <label className="block text-sm font-semibold text-zinc-800">{label}</label>
-                <span className="text-[11px] text-zinc-500 leading-tight block">{description}</span>
-              </div>
-              <span className="bg-emerald-100 text-emerald-800 font-bold text-sm px-3 py-1 rounded-full border border-emerald-200">
-                {data[field]}
-              </span>
-            </div>
+          <Grid size={{ xs: 12, md: 6 }} key={field}>
+            <Card variant="outlined" sx={{ borderRadius: 3, p: 1, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' }}>
+              <CardContent sx={{ '&:last-child': { pb: 2 } }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                  <Box sx={{ pr: 2 }}>
+                    <Typography variant="subtitle2" color="text.primary" sx={{ fontWeight: 700 }}>
+                      {label}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.2, mt: 0.5 }}>
+                      {description}
+                    </Typography>
+                  </Box>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      bgcolor: 'primary.light',
+                      color: 'white',
+                      fontSize: '0.875rem',
+                      px: 2,
+                      py: 0.5,
+                      borderRadius: 4,
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    {data[field]} / 5
+                  </Paper>
+                </Box>
 
-            <input
-              type="range"
-              min="1"
-              max="5"
-              step="1"
-              value={data[field]}
-              onChange={(e) => handleChange(field, parseInt(e.target.value))}
-              className="w-full h-2 bg-zinc-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
+                <Box sx={{ px: 1, py: 1 }}>
+                  <Slider
+                    value={data[field]}
+                    min={1}
+                    max={5}
+                    step={1}
+                    marks
+                    onChange={(_, val) => handleChange(field, val as number)}
+                    color="primary"
+                    sx={{
+                      height: 6,
+                      '& .MuiSlider-thumb': {
+                        width: 18,
+                        height: 18,
+                        '&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
+                          boxShadow: 'inherit',
+                        },
+                      },
+                    }}
+                  />
+                </Box>
 
-            <div className="flex justify-between text-[10px] text-zinc-500 font-medium">
-              <span className="max-w-[120px]">{minLabel}</span>
-              <span className="max-w-[120px] text-right">{maxLabel}</span>
-            </div>
-          </div>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                  <Typography variant="caption" color="text.secondary" sx={{ maxWidth: '45%' }}>
+                    {minLabel}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" sx={{ maxWidth: '45%', textAlign: 'right' }}>
+                    {maxLabel}
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
         ))}
-      </div>
+      </Grid>
 
-      {/* Diálogo interno select */}
-      <div className="bg-zinc-50 p-4 rounded-xl border border-zinc-100 space-y-3">
-        <div>
-          <label className="block text-sm font-semibold text-zinc-800">Diálogo Interno Predominante</label>
-          <span className="text-[11px] text-zinc-500 block">¿Cómo son tus pensamientos o conversaciones internas en la cancha hoy?</span>
-        </div>
-        <div className="grid grid-cols-3 gap-3">
-          {(['positivo', 'neutro', 'negativo'] as const).map((type) => (
-            <button
-              key={type}
-              type="button"
-              onClick={() => handleChange('selfTalk', type)}
-              className={`py-3 px-4 rounded-lg text-xs font-semibold border transition-all text-center capitalize ${
-                data.selfTalk === type
-                  ? type === 'positivo'
-                    ? 'bg-emerald-600 border-emerald-600 text-white shadow-sm'
-                    : type === 'neutro'
-                    ? 'bg-zinc-700 border-zinc-700 text-white shadow-sm'
-                    : 'bg-rose-600 border-rose-600 text-white shadow-sm'
-                  : 'bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-100'
-              }`}
+      {/* Diálogo Interno */}
+      <Card variant="outlined" sx={{ borderRadius: 3, p: 1, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' }}>
+        <CardContent sx={{ '&:last-child': { pb: 2 } }}>
+          <FormControl component="fieldset" fullWidth>
+            <FormLabel component="legend" sx={{ mb: 1 }}>
+              <Typography variant="subtitle2" color="text.primary" sx={{ fontWeight: 700 }}>
+                Diálogo Interno Predominante
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.2 }}>
+                ¿Cómo son tus pensamientos o conversaciones internas en la cancha hoy?
+              </Typography>
+            </FormLabel>
+            <RadioGroup
+              row
+              value={data.selfTalk}
+              onChange={(e) => handleChange('selfTalk', e.target.value)}
+              sx={{ gap: 2, mt: 1 }}
             >
-              {type}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
+              {[
+                { value: 'positivo', label: 'Positivo (Constructivo / Enfoque)', color: '#10b981' },
+                { value: 'neutro', label: 'Neutro (Táctico / Descriptivo)', color: '#6b7280' },
+                { value: 'negativo', label: 'Negativo (Auto-crítica / Limitante)', color: '#ef4444' },
+              ].map((item) => (
+                <FormControlLabel
+                  key={item.value}
+                  value={item.value}
+                  control={<Radio />}
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body2" sx={{ textTransform: 'capitalize', fontWeight: 600 }}>
+                        {item.value}
+                      </Typography>
+                      <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: item.color }} />
+                    </Box>
+                  }
+                  sx={{
+                    flexGrow: 1,
+                    bgcolor: 'background.paper',
+                    border: '1px solid',
+                    borderColor: data.selfTalk === item.value ? 'primary.main' : 'divider',
+                    borderRadius: 3,
+                    p: 1.5,
+                    m: 0,
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      borderColor: 'primary.light',
+                      bgcolor: 'rgba(15, 118, 110, 0.02)',
+                    },
+                  }}
+                />
+              ))}
+            </RadioGroup>
+          </FormControl>
+        </CardContent>
+      </Card>
+    </Box>
   );
 }

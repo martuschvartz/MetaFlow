@@ -4,8 +4,7 @@
 - **Framework:** Next.js (App Router)
 - **Library:** React
 - **Language:** TypeScript
-- **Styling:** Tailwind CSS (recomendado para iteración rápida de UI)
-- **Componentes UI:** shadcn/ui o componentes nativos de Tailwind (ideal para sliders, checkboxes y modales rápidos).
+- **Styling & UI Components:** Material UI (MUI) o Mantine (Librería de componentes pre-estilizados). Se priorizará el uso de los componentes nativos de la librería (Sliders, Checkboxes, Cards, etc.) para acelerar el desarrollo del MVP y mantener consistencia.
 
 ## Deployment & Hosting
 - **Plataforma:** Vercel
