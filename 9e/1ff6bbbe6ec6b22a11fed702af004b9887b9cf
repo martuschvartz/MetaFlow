@@ -1,0 +1,72 @@
+conductor/product.md
+  s_6a572d80902958::t_36c63cc275f4b0 1-11
+conductor/tracks/01-mvp-core/plan.md
+  s_6a572d80902958::t_52bc2ca5a25b3c 1-41
+conductor/tracks.md
+  s_6a572d80902958::t_7ea166c327707c 1-5
+src/components/PlayerForm.tsx
+  s_6a572d80902958::t_6ed7452337fe99 1-115
+src/types/assessment.ts
+  s_6a572d80902958::t_5489f145c6e125 1-30
+src/app/page.tsx
+  s_6a572d80902958::t_defd18a978a15c 1-141
+  s_6a572d80902958::t_f9c08a0fb20c77 142-144
+conductor/tracks/01-mvp-core/index.md
+  s_6a572d80902958::t_e79ab9b603c57b 1-4
+src/components/ResultsDisplay.tsx
+  s_6a572d80902958::t_31a2792b57f666 1-171
+src/utils/recommendations.ts
+  s_6a572d80902958::t_282d46092b0dd5 1-69
+conductor/tech-stack.md
+  s_6a572d80902958::t_1b173fceecc53d 1-14
+conductor/workflow.md
+  s_6a572d80902958::t_ca2aebf8ac6eae 1-11
+README.md
+  s_6a572d80902958::t_a7e61c9c312ac8 1-90
+src/components/PsychologistForm.tsx
+  s_6a572d80902958::t_21b8150ed76b5a 1-129
+conductor/tracks/01-mvp-core/spec.md
+  s_6a572d80902958::t_f472953a258c92 1-37
+.gitignore
+  s_6a572d80902958::t_ea2f442fbe5e42 1-41
+eslint.config.mjs
+  s_6a572d80902958::t_1ce151d0b819b9 1-18
+next.config.ts
+  s_6a572d80902958::t_12620a233415b8 1-7
+package.json
+  s_6a572d80902958::t_f4497ee5b3abd5 1-26
+postcss.config.mjs
+  s_6a572d80902958::t_76c290abce8a89 1-7
+public/file.svg
+  s_6a572d80902958::t_1d6e177a749eaf 1
+public/globe.svg
+  s_6a572d80902958::t_3c4ad5e7836561 1
+public/next.svg
+  s_6a572d80902958::t_62ce1b1c0d739c 1
+public/vercel.svg
+  s_6a572d80902958::t_f2f6ed102389ef 1
+public/window.svg
+  s_6a572d80902958::t_58a7a3dacf22b4 1
+src/app/globals.css
+  s_6a572d80902958::t_6ee7f92db67377 1-26
+src/app/layout.tsx
+  s_6a572d80902958::t_4316a4ed60fbeb 1-29
+tsconfig.json
+  s_6a572d80902958::t_a422d2308a433e 1-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "9e1ff6bbbe6ec6b22a11fed702af004b9887b9cf",
+  "prompts": {},
+  "sessions": {
+    "s_6a572d80902958": {
+      "agent_id": {
+        "tool": "gemini",
+        "id": "30212fa7-e85a-4593-9379-5f5344f2b85d",
+        "model": "gemini-3.5-flash"
+      },
+      "human_author": "martuschvartz <schvartzmartina@gmail.com>"
+    }
+  }
+}
